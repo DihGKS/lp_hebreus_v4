@@ -245,6 +245,55 @@ body.lp .hero-slogan { text-align: center; margin-left: auto; margin-right: auto
   body.lp .hero-cta-mobile { padding-top: 18px; padding-bottom: 18px; }
 }
 
+/* ── BLOCO 3: SOBRE NÓS — imagem ──
+   Usa a MESMA foto do hero, porém em um arquivo já recortado:
+   img_hebreus/sobre-nos-hebreus.jpg (800x900 = proporção exata do quadro).
+
+   Por que recortar no arquivo e não no CSS: a foto original é retrato 2:3.
+   No hero (tela larga) o cover é limitado pela largura e mostra 100% da
+   largura, mas só 42% da altura — uma faixa central. Neste quadro de
+   400x450 o mesmo cover mostraria 75% da altura, deixando a cena mais
+   "afastada" que no hero. Como as duas caixas têm proporções diferentes,
+   nenhum ajuste de CSS igualaria o enquadramento; o recorte prévio, sim.
+
+   A moldura (400px de largura máx., 450px de altura no desktop / 300px no
+   mobile) e a borda decorativa deslocada continuam exatamente iguais.
+
+   O cover permanece como rede de segurança: no MOBILE a moldura fica mais
+   larga que alta, então ainda há corte de topo/base. */
+body.lp #historia .historia-img-wrap img {
+  object-fit: cover;
+  object-position: center center;
+}
+
+/* Moldura da foto: carrega a sombra e os cantos arredondados, e recorta a
+   imagem no raio da borda (overflow: hidden).
+   O desfoque foi REMOVIDO a pedido do cliente — junto com ele saíram o
+   filter blur() e o scale(1.05) que existia só para compensar as bordas
+   esfumaçadas do blur. A foto agora aparece na nitidez original.
+   Se um dia quiser retomar o efeito, basta reativar as duas linhas
+   comentadas no bloco abaixo. */
+body.lp #historia .historia-img-frame {
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  line-height: 0;          /* elimina o espaço extra abaixo da imagem */
+}
+body.lp #historia .historia-img-frame img {
+  border-radius: 0;        /* o arredondamento é da moldura */
+  /* filter: blur(2px); */
+  /* transform: scale(1.05); */
+}
+
+/* AJUSTE FINO DO ENQUADRAMENTO — só faz efeito no MOBILE, onde a moldura
+   (largura total x 300px) ainda corta topo/base do arquivo 800x900:
+     object-position: center 38%;  → prioriza a navalha e as mãos
+     object-position: center 62%;  → prioriza a orelha e a barba
+   No desktop o arquivo já tem a proporção exata do quadro, então o cover
+   não recorta nada e o object-position é indiferente. */
+
 /* ── BLOCO 3: SOBRE NÓS (História) — botão "Quero conhecer o Clube", centralizado
    na tela, do mesmo jeito que o botão do Hero fica no mobile. ── */
 body.lp #historia .historia-text { text-align: left; }
@@ -311,6 +360,29 @@ body.lp #carouselDepoimentos { padding-bottom: 26px; }
 
 /* ── BLOCO 5: AGENDAMENTO — fundo do bloco BRANCO (padrão do .cta-recruta,
    herdado do style.css institucional). Sem override de cor aqui. ── */
+
+/* Foto da FACHADA no mobile: precisa aparecer INTEIRA.
+   O institucional trava a área da imagem em 240px de altura (flex: 0 0 240px)
+   e usa object-fit: cover — com uma foto em retrato (377/496), isso cortaria
+   quase metade da fachada. Aqui a área passa a assumir a proporção real do
+   arquivo, então nada é cortado.
+
+   O breakpoint é 860px (e não 768px) porque é nele que o card empilha
+   no style.css; abaixo disso a imagem ocupa a largura toda. */
+@media (max-width: 860px) {
+  body.lp .cta-recruta-img {
+    flex: 0 0 auto;
+    width: 100%;
+    aspect-ratio: 377 / 496;   /* proporção exata de fachada-hebreus.jpg */
+  }
+  body.lp .cta-recruta-img img {
+    height: 100%;
+    object-fit: contain;       /* garantia: se a foto for trocada por outra
+                                  de proporção diferente, ela ainda aparece
+                                  inteira, com o fundo navy preenchendo */
+    object-position: center;
+  }
+}
 
 /* O painel navy é um flex column; o institucional usa align-self: flex-start
    no botão. Aqui ele fica centralizado dentro do card. */
